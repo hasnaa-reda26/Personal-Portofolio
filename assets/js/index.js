@@ -504,6 +504,79 @@ function initContactForm() {
 }
 
 
+function initTestimonialsCarousel() {
+    const track = document.getElementById('testimonials-carousel');
+    const cards = document.querySelectorAll('.testimonial-card');
+    const nextBtn = document.getElementById('next-testimonial');
+    const prevBtn = document.getElementById('prev-testimonial');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+
+    if (!track || cards.length === 0) return;
+
+    let currentIndex = 0;
+
+    function updateCarousel() {
+
+        let visibleCards = 1;
+        if (window.innerWidth >= 1024) {
+            visibleCards = 3;
+        } else if (window.innerWidth >= 640) {
+            visibleCards = 2;
+        }
+
+        let maxIndex = cards.length - visibleCards;
+        if (maxIndex < 0) {
+            maxIndex = 0;
+        }
+
+        if (currentIndex > maxIndex) {
+            currentIndex = 0; 
+        }
+        if (currentIndex < 0) {
+            currentIndex = maxIndex; 
+        }
+
+        let cardPercentage = 100 / visibleCards;
+        let translateValue = currentIndex * cardPercentage;
+        track.style.transform = 'translateX(' + translateValue + '%)';
+
+        indicators.forEach(function(dot, index) {
+
+            dot.classList.remove('bg-accent');
+            dot.classList.add('dark:bg-slate-600');
+            
+            if (index === currentIndex) {
+                dot.classList.add('bg-accent');
+                dot.classList.remove('dark:bg-slate-600');
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            currentIndex++;
+            updateCarousel();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            currentIndex--;
+            updateCarousel();
+        });
+    }
+
+    indicators.forEach(function(dot) {
+        dot.addEventListener('click', function(e) {
+
+            currentIndex = parseInt(e.target.getAttribute('data-index'));
+            updateCarousel();
+        });
+    });
+
+    updateCarousel();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     
     initMobileMenu();
@@ -515,6 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollToTop();
     initCustomSelects();
     initContactForm();
+    initTestimonialsCarousel();
 
     console.log('App initialized successfully!');
 });
